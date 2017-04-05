@@ -1,0 +1,78 @@
+<?xml version="1.0"?>
+
+<!--
+Note: This XML document is an example Coherence Cache Configuration deployment descriptor that should be customized (or replaced) for your particular caching requirements. The cache mappings and schemes declared in this descriptor are  strictly for demonstration purposes and are not required.
+
+For detailed information on each of the elements that can be used in this descriptor please see the Coherence Cache Configuration deployment descriptor guide included in the Coherence distribution or the "Cache Configuration Elements" page on the Coherence Wiki (http://wiki.tangosol.com).
+-->
+
+<cache-config xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+              xmlns="http://xmlns.oracle.com/coherence/coherence-cache-config"
+              xmlns:jcache="class://com.tangosol.coherence.jcache.JCacheNamespace"
+              xsi:schemaLocation="http://xmlns.oracle.com/coherence/coherence-cache-config http://xmlns.oracle.com/coherence/coherence-cache-config/1.3/coherence-cache-config.xsd">
+
+
+  <!--
+  The defaults element defines factory-wide default settings.
+  -->
+    <!--coherence-version:12.2.1-->
+  <defaults>
+    <!--
+    Note: This element defines the default serializer for all services defined within this cache configuration descriptor.
+
+    Valid values include full serializer definitions, as well as named references to serializers defined within the "serializers" element of the operational configuration.
+
+    Example values include: java, pof. Default value is java.
+    -->
+    <serializer system-property="tangosol.coherence.serializer"/>
+
+    <!--
+    Note: This element defines the default socket-provider for all Coherence    Extend services defined within this cache configuration descriptor.
+
+    Valid values include full socket-provider definitions, as well as named    references to providers defined within the "socket-providers" element of the    operational configuration.
+
+    This setting only specifies the default socket-provider for Coherence    Extend services; TCMP's socket-provider is specified within the "unicast-listener" of the operational configuration.
+
+    Example values include: system, ssl. Default value is system.
+    -->
+    <socket-provider system-property="tangosol.coherence.socketprovider"/>
+  </defaults>
+
+  <caching-scheme-mapping>
+    <cache-mapping>
+      <cache-name>*</cache-name>
+      <scheme-name>DrawingsPartitionedPofScheme</scheme-name>
+    </cache-mapping>
+  </caching-scheme-mapping>
+
+  <caching-schemes>
+    <distributed-scheme>
+      <scheme-name>DrawingsPartitionedPofScheme</scheme-name> 
+      <service-name>PartitionedPofCacheService</service-name> 
+      <serializer>  
+       <instance>
+        <class-name>com.tangosol.io.pof.ConfigurablePofContext</class-name> 
+          <init-params> 
+            <init-param> 
+              <param-type>String</param-type>  
+              <param-value>drawingboard-pof-config.xml</param-value> 
+            </init-param> 
+          </init-params> 
+       </instance>
+      </serializer>  
+      <!--thread-count>3</thread-count-->
+            <reliable-transport>datagram</reliable-transport>
+            <thread-count>5</thread-count>
+      <backing-map-scheme>
+                <partitioned>true</partitioned>
+        <local-scheme>
+          <!-- each node will be limited to 250MB -->
+          <high-units>250MB</high-units> 
+          <unit-calculator>BINARY</unit-calculator> 
+          <unit-factor>1024</unit-factor> <!-- in KB see units-->
+        </local-scheme>
+      </backing-map-scheme>
+      <autostart>true</autostart>
+    </distributed-scheme>
+  </caching-schemes>
+</cache-config>
