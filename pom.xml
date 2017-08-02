@@ -4,10 +4,10 @@
     <modelVersion>4.0.0</modelVersion>
 
     <groupId>com.mycompany</groupId>
-    <artifactId>drawingboard-micro-sse-coh</artifactId>
+    <artifactId>drawingboard-micro-coh-sse</artifactId>
     <packaging>jar</packaging>
     <version>1.0-SNAPSHOT</version>
-    <name>drawingboard-micro-sse-coh</name>
+    <name>drawingboard-micro-coh-sse</name>
 
     <repositories>
         <repository>
