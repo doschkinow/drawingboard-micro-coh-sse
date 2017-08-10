@@ -18,7 +18,7 @@ push:
         tag: latest
         repository: $DOCKER_REPOSITORY
         registry: https://index.docker.io/v1/
-        entrypoint: java -Dcoherence.cluster="oracle's cluster" -Dcoherence.cacheconfig=drawingboard-coherence-cache-config.xml -Dcoherence.wka=occs-occs-wkr-1 -Dcoherence.wka2=occs-occs-wkr-2 -jar  /pipeline/source/target/drawingboard-micro-coh-sse-1.0-SNAPSHOT-jar-with-dependencies.jar
+        entrypoint: java -Dcoherence.cluster="oracle's cluster" -Dcoherence.cacheconfig=drawingboard-coherence-cache-config.xml -Dcoherence.wka=occs-occs-wkr-1 -Dcoherence.wka2=occs-occs-wkr-2 -Dcoherence.jcache.configuration.classname=passthrough -Dcoherence.distributed.localstorage=false -jar  /pipeline/source/target/drawingboard-micro-coh-sse-1.0-SNAPSHOT-jar-with-dependencies.jar
 restart-occs:
   steps:
     # Manage Oracle Container Cloud Service container
