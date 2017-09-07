@@ -4,11 +4,14 @@ build:
     # generate master   
     - script:
         name: master security settings
-        code: echo "<settingsSecurity><master>$MASTER</master></settingsSecurity>" > /pipeline/source/master.xml
+        code: echo "<settingsSecurity><master>$MASTER</master></settingsSecurity>" > master.xml
     # Build microservice cache
     - script:
         name: Maven package one-jar
-        code: mvn -s /pipeline/source/settings.xml -Dsettings.security=/pipeline/source/master.xml package
+        code: mvn -s settings.xml -Dsettings.security=master.xml package
+    - script:
+        name: clean up
+        code: rm master.xml
 push:
   steps:
     # Push to public docker repo
@@ -29,3 +32,17 @@ restart-occs:
         rest_server_url: $REST_SERVER_URL
         function: $FUNCTION
         deployment_name: $DEPLOYMENT_NAME
+swarm-update-service:
+  steps:
+    # generate ssh key
+    - script:
+        name: put ssh key in a file
+        code: echo $SSHKEY_PART >> sshkey-part; echo '-----END RSA PRIVATE KEY-----' >> sshkey-part; chmod 600 sshkey-part
+    # update swarm service 
+    - script:
+        name: update swarm service
+        code: ssh -i sshkey-part -o StrictHostKeyChecking=no ubuntu@129.144.150.24 docker service ls
+    # clean up
+    - script:
+        name: clean
+        code: rm sshkey-part
