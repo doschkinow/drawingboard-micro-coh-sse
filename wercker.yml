@@ -10,6 +10,9 @@ build:
         name: Maven package one-jar
         code: mvn -s settings.xml -Dsettings.security=master.xml package
     - script:
+        name: change file mode
+        code: chmod +x *.bash
+    - script:
         name: clean up
         code: rm master.xml
 push:
