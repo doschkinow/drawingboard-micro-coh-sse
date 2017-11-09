@@ -12,8 +12,10 @@ fi
 
 
 # get the ip address of the local overlay network interface
+# the "grep 24" a hack to discard the ip for the service, which has a mask of 32 and on some 
+# systems appear on interface lo, on other on eth0
 subnet=12.0.0.[0-9]+
-localip=`ip a |grep eth0 | egrep -o -e $subnet`
+localip=`ip a |grep 24 | grep eth0 | egrep -o -e $subnet`
 
 jarfile=$(ls /pipeline/source/target/*with-dependencies.jar)
 options="-Dcoherence.cacheconfig=drawingboard-coherence-cache-config.xml -Dcoherence.localhost=$localip"
