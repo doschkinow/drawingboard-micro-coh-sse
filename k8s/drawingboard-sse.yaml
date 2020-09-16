@@ -1,0 +1,52 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: drawingboard-sse
+spec:
+  replicas: 2
+  selector:
+    matchLabels:
+      app: drawingboard-sse
+  template:
+    metadata:
+      labels:
+        app: drawingboard-sse
+    spec:
+      containers:
+      - name: drawingboard-sse
+        image: doschkinow/drawingboard-micro-coh-sse:latest
+        imagePullPolicy: Always
+        env:
+          - name: HOSTNAME
+            value: "0.0.0.0"
+          - name: WS_LOCATION
+            value: "drawingboard.doschkinow.tk"
+---
+apiVersion: v1
+kind: Service
+metadata:
+    name: drawingboard-sse
+spec:
+    selector:
+        app: drawingboard-sse
+    ports:
+      - port: 8080
+        protocol: TCP
+        targetPort: 8080
+
+---
+apiVersion: extensions/v1beta1
+kind: Ingress
+metadata:
+  name: drawingboard-sse
+spec:
+  rules:
+  - host: "drawingboard.doschkinow.tk"
+    http:
+      paths:
+        - path: /sse
+          backend:
+            serviceName: drawingboard-sse
+            servicePort: 8080
+
+
