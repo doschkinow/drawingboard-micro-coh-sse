@@ -1,51 +1,20 @@
 box: combient/java-mvn
 build:
   steps:
-    # generate master   
-    - script:
-        name: master security settings
-        code: echo "<settingsSecurity><master>$MASTER</master></settingsSecurity>" > master.xml
     # Build microservice cache
     - script:
         name: Maven package one-jar
-        code: mvn -s settings.xml -Dsettings.security=master.xml package
+        code: mvn package
     - script:
         name: change file mode
-        code: chmod +x *.bash
-    - script:
-        name: clean up
-        code: rm master.xml
+        code: chmod +x k8s/*.bash
 push:
   steps:
-    # Push to public docker repo
+    # Push to public docker repository 
     - internal/docker-push:
         username: $DOCKER_USERNAME
         password: $DOCKER_PASSWORD
         tag: latest
         repository: $DOCKER_REPOSITORY
         registry: https://index.docker.io/v1/
-        #entrypoint: java -Dcoherence.cluster="oracle's cluster" -Dcoherence.cacheconfig=drawingboard-coherence-cache-config.xml -Dcoherence.wka=occs-occs-wkr-1 -Dcoherence.wka2=occs-occs-wkr-2 -Dcoherence.jcache.configuration.classname=passthrough -Dcoherence.distributed.localstorage=false -jar  /pipeline/source/target/drawingboard-micro-coh-sse-1.0-SNAPSHOT-jar-with-dependencies.jar
-        entrypoint: java -Dcoherence.cluster="oracle's cluster" -Dcoherence.cacheconfig=drawingboard-coherence-cache-config.xml -Dcoherence.jcache.configuration.classname=passthrough -Dcoherence.distributed.localstorage=false -jar  /pipeline/source/target/drawingboard-micro-coh-sse-1.0-SNAPSHOT-jar-with-dependencies.jar
-restart-occs:
-  steps:
-    # Manage Oracle Container Cloud Service container
-    - peternagy/oracle-occs-container-util:
-        occs_user: $OCCS_USER
-        occs_password: $OCCS_PASSWORD
-        rest_server_url: $REST_SERVER_URL
-        function: $FUNCTION
-        deployment_name: $DEPLOYMENT_NAME
-swarm-update-service:
-  steps:
-    # generate ssh key
-    - script:
-        name: put ssh key in a file
-        code: echo $SSHKEY_PART >> sshkey-part; echo '-----END RSA PRIVATE KEY-----' >> sshkey-part; chmod 600 sshkey-part
-    # update swarm service 
-    - script:
-        name: update swarm service
-        code: ssh -i sshkey-part -o StrictHostKeyChecking=no ubuntu@129.144.150.24 docker service ls
-    # clean up
-    - script:
-        name: clean
-        code: rm sshkey-part
+        entrypoint: /pipeline/source/k8s/startup.bash
