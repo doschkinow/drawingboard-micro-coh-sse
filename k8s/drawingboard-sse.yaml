@@ -20,7 +20,7 @@ spec:
           - name: HOSTNAME
             value: "0.0.0.0"
           - name: WS_LOCATION
-            value: "drawingboard.doschkinow.tk"
+            value: "ws.doschkinow.tk"
 ---
 apiVersion: v1
 kind: Service
@@ -41,10 +41,10 @@ metadata:
   name: drawingboard-sse
 spec:
   rules:
-  - host: "drawingboard.doschkinow.tk"
+  - host: "sse.doschkinow.tk"
     http:
       paths:
-        - path: /sse
+        - path: /
           backend:
             serviceName: drawingboard-sse
             servicePort: 8080
